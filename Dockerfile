@@ -9,9 +9,9 @@
 #
 # Build stage
 #
-FROM maven:3.8.2-jdk-11 AS build
+FROM amazoncorretto:11-alpine-jdk AS build
 COPY . .
-RUN mvn clean package -DskipTests
+RUN mvn clean package
 
 #
 # Package stage
