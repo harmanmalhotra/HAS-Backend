@@ -1,31 +1,42 @@
-#
-# Build stage
-#
-# Use the official maven/Java 8 image to create a build artifact.
-# https://hub.docker.com/_/maven
-FROM maven:3.8.2-jdk-11 as build
-#
-# # Copy local code to the container image.
-COPY . .
-#
-# # Build a release artifact.
-RUN mvn clean package
+### BUILD image
+FROM maven:3-jdk-11 as builder
+#Copy Custom Maven settings
+#COPY settings.xml /root/.m2/
+# create app folder for sources
+RUN mkdir -p /build
+WORKDIR /build
+COPY pom.xml /build
+#Download all required dependencies into one layer
+RUN mvn -B dependency:resolve dependency:resolve-plugins
+#RUN mvn dependency:resolve-plugins
+#Copy source code
+COPY src /build/src
+# Build application
+RUN mvn package
 
 
-#
-# Package stage
-#
-# It's important to use OpenJDK 8u191 or above that has container support enabled.
-# https://hub.docker.com/r/adoptopenjdk/openjdk8
-# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM openjdk:11-jdk-slim
-
-# Copy the jar to the production image from the builder stage.
-COPY --from=build /target/Hostel-Availability-System-0.0.1-SNAPSHOT.jar Hostel-Availability-System.jar
-
-# ENV PORT=8080
+FROM openjdk:11-slim as runtime
 EXPOSE 8080
+#Set app home folder
+ENV APP_HOME /app
+#Possibility to set JVM options (https://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html)
+ENV JAVA_OPTS=""
 
-# Run the web service on container startup.
-ENTRYPOINT ["java","-jar","Hostel-Availability-System.jar"]
+#Create base app folder
+RUN mkdir $APP_HOME
+#Create folder to save configuration files
+RUN mkdir $APP_HOME/config
+#Create folder with application logs
+RUN mkdir $APP_HOME/log
+
+VOLUME $APP_HOME/log
+VOLUME $APP_HOME/config
+
+WORKDIR $APP_HOME
+#Copy executable jar file from the builder image
+COPY --from=builder /build/target/*.jar has.jar
+
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar has.jar" ]
+#Second option using shell form:
+#ENTRYPOINT exec java $JAVA_OPTS -jar app.jar $0 $@
 
