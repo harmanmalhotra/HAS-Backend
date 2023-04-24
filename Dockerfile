@@ -9,7 +9,7 @@ FROM maven:3.8.2-jdk-11 as build
 COPY . .
 #
 # # Build a release artifact.
-RUN mvn clean install
+RUN mvn clean package
 
 
 #
