@@ -1,23 +1,26 @@
-# # define base docker image
-# FROM openjdk:11
-# LABEL maintainer = "javaguides.net"
-# ADD target/Hostel-Availability-System-0.0.1-SNAPSHOT.jar hostelAvailabilitySystem.jar
-# ENTRYPOINT ["java", "-jar", "hostelAvailabilitySystem.jar"]
-
-
-
+# Use the official maven/Java 8 image to create a build artifact.
+# https://hub.docker.com/_/maven
+# FROM maven:3.8.2-jdk-11 as build
 #
-# Build stage
+# # Copy local code to the container image.
+# COPY . .
 #
-FROM amazoncorretto:11-alpine-jdk AS build
-COPY . .
-RUN mvn clean package
+# # Build a release artifact.
+# RUN mvn clean package
 
-#
-# Package stage
-#
-FROM amazoncorretto:11-alpine-jdk
-COPY --from=build /target/demo-0.0.1-SNAPSHOT.jar demo.jar
-# ENV PORT=8080
+# Use AdoptOpenJDK for base image.
+# It's important to use OpenJDK 8u191 or above that has container support enabled.
+# https://hub.docker.com/r/adoptopenjdk/openjdk8
+# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
+# FROM openjdk:11-jdk-slim
+
+# Copy the jar to the production image from the builder stage.
+# COPY target/Hostel-Availability-System-*.jar Hostel-Availability-System.jar
+
+# Run the web service on container startup.
+# ENTRYPOINT ["java","-jar","Hostel-Availability-System.jar"]
+
+FROM openjdk:11-jre-slim
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","demo.jar"]
+COPY target/Hostel-Availability-System*.jar /Hostel-Availability-System.jar
+ENTRYPOINT ["java", "-jar", "/app.jar"]
