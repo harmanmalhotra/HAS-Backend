@@ -89,4 +89,9 @@ public class AuthController {
                 .header(HttpHeaders.SET_COOKIE, cookie.toString()).body("ok");
     }
 
+    @GetMapping("/test")
+    public String testAPI () {
+        return "Success";
+    }
+
 }

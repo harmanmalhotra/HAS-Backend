@@ -49,6 +49,7 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/auth/login").permitAll()
+                .antMatchers("/auth/test").permitAll()
                 .antMatchers("/auth/updatePassword").permitAll()
                 .antMatchers("/auth/logout").permitAll()
                 .antMatchers("/student/registration").permitAll()
