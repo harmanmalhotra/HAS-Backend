@@ -1,5 +1,5 @@
 ### BUILD image
-FROM maven:3-jdk-11 as builder
+FROM maven:3.8-openjdk-17 as builder
 #Copy Custom Maven settings
 #COPY settings.xml /root/.m2/
 # create app folder for sources
@@ -15,7 +15,7 @@ COPY src /build/src
 RUN mvn package
 
 
-FROM openjdk:11-slim as runtime
+FROM ibm-semeru-runtimes:open-17-jre-centos7 as runtime
 EXPOSE 8080
 #Set app home folder
 ENV APP_HOME /app
