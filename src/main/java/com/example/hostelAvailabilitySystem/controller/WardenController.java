@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequestMapping(path = "warden")
 @PreAuthorize("hasAnyAuthority('ROLE_WARDEN','ROLE_ADMIN')")
 @AllArgsConstructor
-//@CrossOrigin
+@CrossOrigin
 public class WardenController {
     private SmsRequest smsRequest;
 

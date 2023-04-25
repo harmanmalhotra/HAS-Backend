@@ -12,7 +12,7 @@ import java.util.List;
 @Transactional
 @RestController
 @RequestMapping(path = "student")
-//@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin
 public class StudentController {
     @Autowired
     private StudentService studentService;

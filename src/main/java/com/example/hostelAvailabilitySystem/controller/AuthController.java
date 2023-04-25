@@ -22,7 +22,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequestMapping(path = "auth")
-//@CrossOrigin
+@CrossOrigin
 @AllArgsConstructor
 public class AuthController {
 

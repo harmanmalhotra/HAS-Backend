@@ -19,7 +19,7 @@ import java.util.Objects;
 @Transactional
 @RestController
 @RequestMapping(path = "admin")
-//@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin
 public class AdminController {
 
     @Autowired
